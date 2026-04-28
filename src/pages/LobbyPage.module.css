@@ -1,0 +1,210 @@
+.page {
+  min-height: 100vh;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.back {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  align-self: flex-start;
+  padding: 0.25rem 0;
+  transition: color 0.2s;
+}
+.back:hover { color: var(--text); }
+
+.pinCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.pinLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.pinDisplay {
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 12vw, 4rem);
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  color: var(--text);
+  line-height: 1;
+}
+
+.copyBtn {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4rem 1rem;
+  transition: all 0.2s;
+  margin-top: 0.25rem;
+}
+.copyBtn:hover { color: var(--text); border-color: var(--border-accent); }
+
+.section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.badge {
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px;
+  border: 1px solid var(--border-accent);
+}
+
+.playerList {
+  min-height: 120px;
+}
+
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.875rem;
+}
+
+.playerRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  animation: slideIn 0.3s ease;
+}
+.playerRow:last-child { border-bottom: none; }
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.playerIdx {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  min-width: 24px;
+}
+
+.playerName {
+  flex: 1;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.you {
+  font-size: 0.7rem;
+  background: var(--accent-dim);
+  color: var(--accent);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+
+.playerScore {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btnPlay {
+  flex: 1;
+  background: var(--accent);
+  color: #0a0a0f;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.9rem;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+.btnPlay:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btnPlay:active { transform: none; }
+
+.btnSecondary {
+  flex: 0 0 auto;
+  background: var(--bg-card);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.9rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+.btnSecondary:hover { border-color: var(--border-accent); }
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+.hint strong { color: var(--text-muted); }
+
+.center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  display: block;
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.errorMsg {
+  color: #ff6b6b;
+  font-size: 1rem;
+  text-align: center;
+}

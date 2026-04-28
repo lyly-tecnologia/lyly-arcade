@@ -1,0 +1,83 @@
+name: Production
+
+on:
+  release:
+    types: [published]
+
+env:
+  DOMAIN: play.${{ vars.DOMAIN }}
+
+jobs:
+  deploy:
+    strategy:
+      matrix:
+        include:
+          - tenant: lylyland
+            organization: Lylyland
+    runs-on: ubuntu-latest
+    environment: ${{ matrix.tenant }}-production
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+        env:
+          VITE_SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_API_URL=${{ secrets.API_URL }}
+
+      - name: Deploy All Assets (Except Compressed)
+        run: |
+          aws s3 sync dist/ s3://${{ env.DOMAIN }} \
+            --exclude "*.html" \
+            --exclude "*.br" \
+            --cache-control "public, max-age=31536000, immutable"
+
+      - name: Deploy JS.BR Files
+        run: |
+          aws s3 sync dist/ s3://${{ env.DOMAIN }} \
+            --exclude "*" \
+            --include "*.js.br" \
+            --content-encoding "br" \
+            --content-type "application/javascript" \
+            --cache-control "public, max-age=31536000, immutable"
+
+      - name: Deploy WASM.BR Files
+        run: |
+          aws s3 sync dist/ s3://${{ env.DOMAIN }} \
+            --exclude "*" \
+            --include "*.wasm.br" \
+            --content-encoding "br" \
+            --content-type "application/wasm" \
+            --cache-control "public, max-age=31536000, immutable"
+
+      - name: Deploy DATA.BR Files
+        run: |
+          aws s3 sync dist/ s3://${{ env.DOMAIN }} \
+            --exclude "*" \
+            --include "*.data.br" \
+            --content-encoding "br" \
+            --content-type "application/octet-stream" \
+            --cache-control "public, max-age=31536000, immutable"
+
+      - name: Deploy HTML Files
+        run: |
+          aws s3 sync dist/ s3://${{ env.DOMAIN }} \
+            --exclude "*" \
+            --include "*.html" \
+            --content-type "text/html" \
+            --cache-control "no-cache, no-store, must-revalidate"

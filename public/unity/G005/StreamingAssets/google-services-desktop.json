@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "773909297304",
+    "firebase_url": "https://staging-lyly-default-rtdb.firebaseio.com",
+    "project_id": "staging-lyly",
+    "storage_bucket": "staging-lyly.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773909297304:android:01e3685052661f3113f8ed",
+        "android_client_info": {
+          "package_name": "com.lyly.analytics.test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAp2AJubAYDyilbcKxF_ZzeTqCms0w2Tu8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:773909297304:android:378a0ca6357ae7a913f8ed",
+        "android_client_info": {
+          "package_name": "com.lyly.player.stg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAp2AJubAYDyilbcKxF_ZzeTqCms0w2Tu8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

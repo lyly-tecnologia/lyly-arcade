@@ -1,0 +1,128 @@
+name: Release
+
+on:
+  push:
+    # paths:
+    #   - "src/**"
+    #   - "public/**"
+    branches:
+      - main
+env:
+  DOMAIN_NAME: staging-play.${{ vars.DOMAIN }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include: 
+          - tenant: lylyland
+            organization: Lylyland
+    environment: ${{ matrix.tenant }}-staging
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+        env:
+          VITE_SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+          VITE_API_URL=${{ secrets.API_URL }}
+
+      - name: Deploy On ${{ vars.DOMAIN }}
+        run: |
+          aws s3 sync dist/ s3://${{ env.DOMAIN_NAME }} \
+            --exclude "*.html" \
+            --exclude "*.br"
+            
+      - name: Deploy JS.BR Files On ${{ vars.DOMAIN }}
+        run: |
+          aws s3 sync dist/ s3://${{ env.DOMAIN_NAME }} \
+            --exclude "*" \
+            --include "*.js.br" \
+            --content-encoding "br" \
+            --content-type "application/javascript"
+
+      - name: Deploy WASM.BR Files On ${{ vars.DOMAIN }}
+        run: |
+          aws s3 sync dist/ s3://${{ env.DOMAIN_NAME }} \
+            --exclude "*" \
+            --include "*.wasm.br" \
+            --content-encoding "br" \
+            --content-type "application/wasm"
+
+      - name: Deploy DATA.BR Files On ${{ vars.DOMAIN }}
+        run: |
+          aws s3 sync dist/ s3://${{ env.DOMAIN_NAME }} \
+            --exclude "*" \
+            --include "*.data.br" \
+            --content-encoding "br" \
+            --content-type "application/octet-stream"
+
+      - name: Deploy HTML Files On ${{ vars.DOMAIN }}
+        run: |
+          aws s3 sync dist/ s3://${{ env.DOMAIN_NAME }} \
+            --exclude "*" \
+            --include "*.html" \
+            --content-type "text/html" \
+            --cache-control "no-store, must-revalidate"
+
+      - name: Cleanup Old Files in S3
+        run: |
+          # Get the current date in seconds since epoch
+          current_date=$(date +%s)
+      
+          # List all files in the bucket
+          aws s3 ls s3://${{ env.DOMAIN_NAME }}/ --recursive | while read -r line; do
+            # Extract the date and file path from the list output
+            file_date=$(echo $line | awk '{print $1}')
+            file_path=$(echo $line | awk '{$1=$2=$3=""; print $0}' | sed 's/^ *//')
+      
+            # Convert the file creation date to seconds since epoch
+            file_date_epoch=$(date -d "$file_date" +%s)
+      
+            # Calculate the age of the file in days
+            file_age=$(( (current_date - file_date_epoch) / (60*60*24) ))
+      
+            # Check if the file is older than 30 days
+            if [ $file_age -gt 30 ]; then
+              echo "Deleting $file_path (age: $file_age days)"
+              aws s3 rm s3://${{ env.DOMAIN_NAME }}/$file_path
+            fi
+          done
+          
+  tag:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+      
+      - name: Bump version and push tag
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: minor
+          WITH_V: true
+          INITIAL_VERSION: 1.0.0
+          RELEASE_BRANCHES: main

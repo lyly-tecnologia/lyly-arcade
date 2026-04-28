@@ -1,0 +1,197 @@
+{
+  "startingLine": {
+    "patterns": [
+      {
+        "isToRest": true
+      }
+    ],
+    "biome_type": "STARTING_LINE"
+  },
+  "forced": [
+    {
+      "score": 1,
+      "patterns": [
+        {
+          "isToRest": true
+        },
+        {
+          "isToRest": true
+        },
+        {
+          "isToRest": true
+        },
+        {
+          "isToRest": true
+        },
+        {
+          "isToRest": true
+        }
+      ],
+      "biome_type": "FOREST"
+    }
+  ],  
+  "hitos": [
+    {
+      "score": 0,
+      "spawnProbability": [
+        0,
+        0,
+        100
+      ]
+    },
+    {
+      "score": 100,
+      "spawnProbability": [
+        85,
+        15,
+        0
+      ]
+    },
+    {
+      "score": 300,
+      "spawnProbability": [
+        50,
+        40,
+        10
+      ]
+    },
+    {
+      "score": 500,
+      "spawnProbability": [
+        15,
+        35,
+        50
+      ]
+    },
+    {
+      "score": 360,
+      "spawnProbability": [
+        20,
+        50,
+        30
+      ]
+    },
+    {
+      "score": 190,
+      "spawnProbability": [
+        25,
+        70,
+        5
+      ]
+    },
+    {
+      "score": 150,
+      "spawnProbability": [
+        30,
+        70,
+        0
+      ]
+    },
+    {
+      "score": 80,
+      "spawnProbability": [
+        50,
+        50,
+        0
+      ]
+    },
+    {
+      "score": 20,
+      "spawnProbability": [
+        0,
+        100,
+        0
+      ]
+    }
+  ],
+  "easy": [    
+    {
+      "patterns":[
+          {
+              "isToRest": true
+          },      
+          {
+              "hasBlockers": true,
+              "holeSize": 3,
+              "groupSize": 3
+          },
+          {
+              "speed": 3,
+              "holeSize": 5,
+              "groupSize": 2                
+          },          
+          {
+              "isToRest": true
+          }
+      ],
+      "biome_type": "FOREST"
+    }
+  ],
+  "medium": [
+    {
+      "patterns": [
+        {
+          "isToRest": true
+        },
+        {          
+          "holeSize": 1,
+          "groupSize": 6
+        },        
+        {          
+          "holeSize": 4,
+          "groupSize": 3,
+          "speed" : 3
+        },  
+        {          
+          "holeSize": 1,
+          "groupSize": 5
+        }                          
+      ],
+      "biome_type": "ICE"
+    }
+  ],
+  "hard": [
+   {
+      "patterns": [
+        {
+            "isToRest": true
+        },
+        {
+          "speed": 3,
+          "holeSize": 3,
+          "groupSize": 2
+        },
+        {
+          "hasBlockers": true,
+          "holeSize": 3,
+          "groupSize": 2
+        }, 
+        {
+          "speed": 7,
+          "holeSize": 3,
+          "groupSize": 1
+        },       
+        {
+          "hasBlockers": true,
+          "holeSize": 1,
+          "groupSize": 3
+        },
+        {
+            "isToRest": true
+        }
+      ],
+      "biome_type": "SAND"
+    }
+  ],
+  "clientSpawnProbability": 10,
+  "pointsPerChickenDelivered": 16,  
+  "maxAFKTime": 10,
+  "maxMovementsWithoutAdvancing": 20,
+  "maxOrders": 5,
+  "jetpackSteps": 20,
+  "powerupSpawnEnabled" : true,
+  "powerupPositions": [30,300, 600, 1000],
+  "powerupInfiniteSpawnRange": [400,600], 
+  "storePositions": [20, 100, 180],
+  "storePositionsInfiniteRange": [80, 100]
+}

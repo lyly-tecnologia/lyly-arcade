@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity Web Player | lyly-games</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <link rel="manifest" href="manifest.webmanifest">
+
+    
+  </head>
+  <body>
+    <div id="unity-container">
+      <canvas id="unity-canvas" width=360 height=640 tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"> </div>
+    </div>
+    <script>
+      window.addEventListener("load", function () {
+        if ("serviceWorker" in navigator) {
+          navigator.serviceWorker.register("ServiceWorker.js");
+        }
+      });
+
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var warningBanner = document.querySelector("#unity-warning");
+
+      // Shows a temporary message banner/ribbon for a few seconds, or
+      // a permanent error message on top of the canvas if type=='error'.
+      // If type=='warning', a yellow highlight color is used.
+      // Modify or remove this function to customize the visually presented
+      // way that non-critical warnings and error messages are presented to the
+      // user.
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else {
+          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+          setTimeout(function() {
+            warningBanner.removeChild(div);
+            updateBannerVisibility();
+          }, 5000);
+        }
+        updateBannerVisibility();
+      }
+
+      var buildUrl = "Build";
+      var loaderUrl = buildUrl + "/G011.loader.js";
+      var config = {
+        arguments: [],
+        dataUrl: buildUrl + "/G011.data.br",
+        frameworkUrl: buildUrl + "/G011.framework.js.br",
+        codeUrl: buildUrl + "/G011.wasm.br",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "Lyly Interactive SAC",
+        productName: "lyly-games",
+        productVersion: "3.7.4",
+        showBanner: unityShowBanner,
+        // errorHandler: function(err, url, line) {
+        //    alert("error " + err + " occurred at line " + line);
+        //    // Return 'true' if you handled this error and don't want Unity
+        //    // to process it further, 'false' otherwise.
+        //    return true;
+        // },
+      };
+
+      // By default Unity keeps WebGL canvas render target size matched with
+      // the DOM size of the canvas element (scaled by window.devicePixelRatio)
+      // Set this to false if you want to decouple this synchronization from
+      // happening inside the engine, and you would instead like to size up
+      // the canvas DOM size and WebGL render target sizes yourself.
+      // config.matchWebGLToCanvasSize = false;
+
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+      }
+
+
+      loadingBar.style.display = "block";
+
+      var script = document.createElement("script");
+      script.src = loaderUrl;
+      script.onload = () => {
+        createUnityInstance(canvas, config, (progress) => {
+          progressBarFull.style.width = 100 * progress + "%";
+        }).then((unityInstance) => {
+          loadingBar.style.display = "none";
+
+          // 1. Armar JSON
+          const payload = {                  
+            next_url: localStorage.getItem('next_url') || "", 
+            api_url: localStorage.getItem('api_url') || "", //url del api
+            api_version: localStorage.getItem('api_version') || "",  //url de la version
+            game_code: localStorage.getItem('game_code') || "",
+            game_uuid: localStorage.getItem('game_uuid') || "",
+            user_code: localStorage.getItem('user_code') || "",
+            from_challenge: localStorage.getItem('from_challenge') || "", //si viene de una tarea debe ser true
+            challenge_uuid : localStorage.getItem('challenge_uuid') || "",
+            challenge_task_uuid: localStorage.getItem('challenge_task_uuid') || "",
+            task_target_score: localStorage.getItem('task_target_score') || "", //para tareas por score
+            task_type: localStorage.getItem('task_type') || "", //GAME_CHAMPIONSHIP - GAME_SCORE  -  GAME_MILESTONE      
+            game_type: localStorage.getItem('game_type') || "", //normal - match
+            game_name: localStorage.getItem('game_name') || "",                                                                        
+            nickname: localStorage.getItem('nickname') || "",                  
+            room_uuid: localStorage.getItem('room_uuid') || "", //**solo juegos con sockets
+            host_nickname: localStorage.getItem('host_nickname') || "", //**solo juegos con sockets
+            sockets_url: localStorage.getItem('sockets_url') || "", //**solo juegos con sockets
+            player_type: localStorage.getItem('player_type') || "", //host - client **solo juegos con sockets
+            brand_name: localStorage.getItem('brand_name') || "", //**solo para juegos con múltiples branding                  
+            access_token: localStorage.getItem('access_token') || "",
+            refresh_token: localStorage.getItem('refresh_token') || ""
+          };
+
+          const jsonString = JSON.stringify(payload);
+
+          // 2. Enviar a Unity (objeto y método que tú crees)
+          unityInstance.SendMessage("GameLoader", "SetGameParameters", jsonString);
+
+        }).catch((message) => {
+          alert(message);
+        });
+      };
+      document.body.appendChild(script);
+    </script>
+  </body>
+</html>
