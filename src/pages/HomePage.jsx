@@ -53,7 +53,7 @@ export function HomePage() {
     setLoading(true)
     try {
       const { accessToken } = useAuthStore.getState()
-      const res = await fetchWithAuth(`create-room`, {
+      const res = await fetchWithAuth(`/create-room`, {
         method: 'POST',
         body: JSON.stringify({ game_code: selectedGame }),
       })

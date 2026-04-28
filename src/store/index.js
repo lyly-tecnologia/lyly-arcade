@@ -45,7 +45,7 @@ export const useAuthStore = create(
       updateName: async (newName) => {
         const apiUrl = import.meta.env.VITE_API_URL
         const { accessToken } = get()
-        const res = await fetchWithAuth(`update-name`, {
+        const res = await fetchWithAuth(`/update-name`, {
           method: 'POST',
           body: JSON.stringify({ playerName: newName }),
         })
